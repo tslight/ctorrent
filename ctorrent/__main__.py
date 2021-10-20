@@ -1,7 +1,7 @@
 import curses
 from argparse import ArgumentParser
 from ctable import show_table
-from .torrents import TPB
+from .torrents import TPB, Solid
 
 
 def get_args():
@@ -12,8 +12,10 @@ def get_args():
 
 def main():
     args = get_args()
-    torrents = TPB().search(args.query)
-    columns = ["name", "size", "seeders", "leechers"]
+    tpb_torrents = TPB().search(args.query)
+    solid_torrents = Solid().search(args.query)
+    torrents = tpb_torrents + solid_torrents
+    columns = ["Name", "Size", "Seeders", "Leechers", "Site"]
     print(show_table(torrents, columns))
 
 

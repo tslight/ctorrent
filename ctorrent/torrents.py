@@ -19,18 +19,38 @@ class TPB:
         url = f"{self.base_url}/q.php?q={query}"
         results = requests.get(url).json()
         results = sorted(results, key=lambda d: int(d["size"]), reverse=True)
+        torrents = []
 
         for result in results:
-            result['magnet'] = self.get_magnet(result['info_hash'], result['name'])
-            result['size'] = get_hr_size(result['size'])
+            torrents.append({
+                "Name": result["name"],
+                "Size": get_hr_size(result['size']),
+                "Seeders": result["leechers"],
+                "Leechers": result["leechers"],
+                "Site": "The Pirate Bay",
+                "Magnet": self.get_magnet(result['info_hash'], result['name']),
+            })
 
-        return results
+        return torrents
 
-class SolidTorrents:
+class Solid:
     def __init__(self):
         self.base_url = "https://solidtorrents.net"
 
-    def search(self, query, sort_by):
+    def search(self, query, sort_by="size"):
         url = f"{self.base_url}/api/v1/search?sort={sort_by}&q={query}"
-        results = requests.get(url).json()
+        results = requests.get(url).json()["results"]
         results = sorted(results, key=lambda d: int(d["size"]), reverse=True)
+        torrents = []
+
+        for result in results:
+            torrents.append({
+                "Name": result["title"],
+                "Size": get_hr_size(result['size']),
+                "Seeders": result["swarm"]["leechers"],
+                "Leechers": result["swarm"]["leechers"],
+                "Site": "Solid Torrents",
+                "Magnet": result["magnet"],
+            })
+
+        return torrents
