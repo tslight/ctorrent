@@ -1,6 +1,6 @@
 import curses
 from argparse import ArgumentParser
-from .ctable import Table
+from ctable import show_table
 from .torrents import TPB
 
 
@@ -10,20 +10,11 @@ def get_args():
     return parser.parse_args()
 
 
-def get_magnet_link(stdscr):
+def main():
     args = get_args()
     torrents = TPB().search(args.query)
-    column_order = ["Name", "Size", "Seeders", "Leechers"]
-    torrent_name = Table(stdscr, torrents, column_order).init()
-    return next(
-        (item for item in torrents if item["Name"] == torrent_name),
-        None
-    )["Magnet"]
-
-
-def main():
-    name = curses.wrapper(get_magnet_link)
-    print(name)
+    columns = ["name", "size", "seeders", "leechers"]
+    print(show_table(torrents, columns))
 
 
 if __name__ == "__main__":

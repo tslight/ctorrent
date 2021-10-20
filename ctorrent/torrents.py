@@ -19,18 +19,18 @@ class TPB:
         url = f"{self.base_url}/q.php?q={query}"
         results = requests.get(url).json()
         results = sorted(results, key=lambda d: int(d["size"]), reverse=True)
-        torrents = []
 
         for result in results:
-            magnet = self.get_magnet(result['info_hash'], result['name'])
-            torrents.append(
-                {
-                    "Name": result["name"],
-                    "Size": get_hr_size(result["size"]),
-                    "Seeders": result["seeders"],
-                    "Leechers": result["leechers"],
-                    "Magnet": magnet,
-                }
-            )
+            result['magnet'] = self.get_magnet(result['info_hash'], result['name'])
+            result['size'] = get_hr_size(result['size'])
 
-        return torrents
+        return results
+
+class SolidTorrents:
+    def __init__(self):
+        self.base_url = "https://solidtorrents.net"
+
+    def search(self, query, sort_by):
+        url = f"{self.base_url}/api/v1/search?sort={sort_by}&q={query}"
+        results = requests.get(url).json()
+        results = sorted(results, key=lambda d: int(d["size"]), reverse=True)

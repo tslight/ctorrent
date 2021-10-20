@@ -21,7 +21,7 @@ setuptools.setup(
         "License :: OSI Approved :: ISC License (ISCL)",
         "Operating System :: OS Independent",
     ),
-    install_requires=["requests"],
+    install_requires=["requests", "ctable"],
     entry_points={
         'console_scripts': [
             'ctorrent = ctorrent.__main__:main',
