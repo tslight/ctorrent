@@ -35,15 +35,28 @@ class TPB:
 
 class Solid:
     def __init__(self):
-        self.base_url = "https://solidtorrents.net"
+        self.base_url = "https://solidtorrents.net/api/v1"
+        self.session = requests.session()
+
+    def generate_results(self, query, sort_by="size", category="all"):
+        current, total = 0, 1
+
+        while current < total:
+            url = f"{self.base_url}/search?sort={sort_by}&q={query}&fuv=yes&skip={current}"
+            data = self.session.get(url).json()
+            total = data["hits"]["value"]
+            current += 20
+            yield from data["results"]
 
     def search(self, query, sort_by="size"):
-        url = f"{self.base_url}/api/v1/search?sort={sort_by}&q={query}"
-        results = requests.get(url).json()["results"]
-        results = sorted(results, key=lambda d: int(d["size"]), reverse=True)
+        all_pages = []
+        for content in self.generate_results(query):
+            all_pages.append(content)
+
+        # results = sorted(all_pages, key=lambda d: int(d["size"]), reverse=True)
         torrents = []
 
-        for result in results:
+        for result in all_pages:
             torrents.append({
                 "Name": result["title"],
                 "Size": get_hr_size(result['size']),
