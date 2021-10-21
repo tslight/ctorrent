@@ -27,8 +27,8 @@ class TPB:
                 {
                     "Name": result["name"],
                     "Size": get_hr_size(result["size"]),
-                    "Seeders": result["leechers"],
-                    "Leechers": result["leechers"],
+                    "SE": result["leechers"],
+                    "LE": result["leechers"],
                     "Site": "The Pirate Bay",
                     "Magnet": self.get_magnet(result["info_hash"], result["name"]),
                 }
@@ -70,8 +70,8 @@ class Solid:
                 {
                     "Name": result["title"],
                     "Size": get_hr_size(result["size"]),
-                    "Seeders": result["swarm"]["leechers"],
-                    "Leechers": result["swarm"]["leechers"],
+                    "SE": result["swarm"]["leechers"],
+                    "LE": result["swarm"]["leechers"],
                     "Site": "Solid Torrents",
                     "Magnet": result["magnet"],
                 }

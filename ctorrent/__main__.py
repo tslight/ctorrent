@@ -28,7 +28,7 @@ def main():
     elif args.site == "solid":
         torrents = Solid().search(args.query)
 
-    columns = ["Name", "Size", "Seeders", "Leechers", "Site"]
+    columns = ["Name", "Size", "SE", "LE", "Site"]
     print(show_table(torrents, columns))
 
 
