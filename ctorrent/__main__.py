@@ -29,7 +29,7 @@ def main():
         torrents = Solid().search(args.query)
 
     columns = ["Name", "Size", "SE", "LE", "Site"]
-    print(show_table(torrents, columns))
+    show_table(torrents, columns)
 
 
 if __name__ == "__main__":
