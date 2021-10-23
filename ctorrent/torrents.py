@@ -1,28 +1,53 @@
+import math
 import requests
 from urllib.parse import quote
-from .utils import get_hr_size
+from .utils import get_hr_size, get_key_from_value
 
 
 class TPB:
     def __init__(self):
         self.base_url = "https://apibay.org"
+        self.categories = {
+            "All": "",
+            "Audio": "100",
+            "Video": "200",
+            "Apps": "300",
+            "Games": "400",
+            "Porn": "500",
+            "Other": "600",
+        }
 
     def get_magnet(self, info_hash, torrent_name):
-        trackers = (
-            "&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3"
-            + "A%2F%2F9.rarbg.me%3A2850%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A29"
-            + "20%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%"
-            + "3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce"
-        )
-        return f"magnet:?xt=urn:btih:{info_hash}&dn={quote(torrent_name)}{trackers}"
+        # trackers_og = (
+        #     "&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce"
+        #     + "&tr=udp%3A%2F%2F9.rarbg.me%3A2850%2Fannounce"
+        #     + "&tr=udp%3A%2F%2F9.rarbg.to%3A2920%2Fannounce"
+        #     + "&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337"
+        #     + "&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce"
+        # )
 
-    def search(self, query):
-        url = f"{self.base_url}/q.php?q={query}"
+        trackers = [
+            "udp://tracker.coppersurfer.tk:6969/announce",
+            "udp://9.rarbg.me:2850/announce",
+            "udp://9.rarbg.to:2920/announce",
+            "udp://tracker.opentrackr.org:1337",
+            "udp://tracker.internetwarriors.net:1337/announce",
+            "udp://tracker.leechers-paradise.org:6969/announce",
+            "udp://tracker.pirateparty.gr:6969/announce",
+            "udp://tracker.cyberia.is:6969/announce",
+        ]
+        trackers = "".join([f"&tr={quote(t, safe='')}" for t in trackers])
+        name = quote(torrent_name, safe="")
+        return f"magnet:?xt=urn:btih:{info_hash}&dn={name}{trackers}"
+
+    def search(self, query, category):
+        url = f"{self.base_url}/q.php?q={query}&cat={self.categories[category]}"
         results = requests.get(url).json()
         results = sorted(results, key=lambda d: int(d["size"]), reverse=True)
         torrents = []
 
         for result in results:
+            cat = int(math.floor(float(result["category"]) / 100.0)) * 100
             torrents.append(
                 {
                     "Name": result["name"],
@@ -30,6 +55,7 @@ class TPB:
                     "SE": result["leechers"],
                     "LE": result["leechers"],
                     "Site": "The Pirate Bay",
+                    "Category": get_key_from_value(self.categories, str(cat)),
                     "Magnet": self.get_magnet(result["info_hash"], result["name"]),
                 }
             )

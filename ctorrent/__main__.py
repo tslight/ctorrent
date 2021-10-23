@@ -8,12 +8,29 @@ def get_args():
     parser = ArgumentParser(description="search for torrents.")
     parser.add_argument("query", help="search query.")
     parser.add_argument(
-        "-s", "--site",
+        "-s",
+        "--site",
         choices=["all", "csv", "tpb", "solid"],
         default="all",
         nargs="?",
         help="torrent website to search",
     )
+    parser.add_argument(
+        "-c",
+        "--category",
+        choices=[
+            "All",
+            "Audio",
+            "Video",
+            "Apps",
+            "Games",
+            "Porn",
+            "Other",
+        ],
+        default="All",
+        help="category to search in",
+    )
+
     return parser.parse_args()
 
 
@@ -24,13 +41,12 @@ def main():
         solid_torrents = Solid().search(args.query)
         torrents = tpb_torrents + solid_torrents
     elif args.site == "tpb":
-        torrents = TPB().search(args.query)
+        torrents = TPB().search(args.query, args.category)
     elif args.site == "solid":
         torrents = Solid().search(args.query)
     elif args.site == "csv":
         torrents = TorrentsCSV().search(args.query)
-
-    columns = ["Name", "Size", "SE", "LE", "Site"]
+    columns = ["Name", "Size", "SE", "LE", "Category", "Site"]
     show_table(torrents, columns)
 
 

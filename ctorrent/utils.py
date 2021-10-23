@@ -18,3 +18,8 @@ def get_hr_size(bytes):
         return "{0:.2f} GB".format(bytes / GB)
     elif TB <= bytes:
         return "{0:.2f} TB".format(bytes / TB)
+
+
+def get_key_from_value(dictionary, value):
+    # https://stackoverflow.com/a/13149770
+    return list(dictionary.keys())[list(dictionary.values()).index(value)]
