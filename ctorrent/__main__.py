@@ -1,7 +1,7 @@
 import curses
 from argparse import ArgumentParser
 from ctable import show_table
-from .torrents import TPB, Solid
+from .torrents import TPB, Solid, TorrentsCSV
 
 
 def get_args():
@@ -9,7 +9,7 @@ def get_args():
     parser.add_argument("query", help="search query.")
     parser.add_argument(
         "-s", "--site",
-        choices=["all", "tpb", "solid"],
+        choices=["all", "csv", "tpb", "solid"],
         default="all",
         nargs="?",
         help="torrent website to search",
@@ -27,6 +27,8 @@ def main():
         torrents = TPB().search(args.query)
     elif args.site == "solid":
         torrents = Solid().search(args.query)
+    elif args.site == "csv":
+        torrents = TorrentsCSV().search(args.query)
 
     columns = ["Name", "Size", "SE", "LE", "Site"]
     show_table(torrents, columns)
