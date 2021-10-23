@@ -57,12 +57,10 @@ class Solid:
         self.session = requests.session()
         self.categories = {
             "all": ["all"],
-            "movies": ["video"],
-            "tv": ["video"],
-            "music": ["audio"],
+            "audio": ["audio"],
+            "video": ["video"],
             "games": ["program", "android"],
-            "anime": ["video"],
-            "software": [
+            "apps": [
                 "program",
                 "android",
                 "archive",
@@ -70,8 +68,7 @@ class Solid:
                 "sourcecode",
                 "database",
             ],
-            "pictures": ["image"],
-            "books": ["document", "ebook", "database"],
+            "other": ["image", "document", "ebook", "database"],
         }
 
     def generate_results(self, query, category, order):
@@ -79,7 +76,7 @@ class Solid:
 
         while current < total:
             params = {
-                "category": category,
+                "category": "+".join(self.categories[category]),
                 "q": query,
                 "sort": order,
                 "skip": current,
